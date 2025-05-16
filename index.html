@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CYBERPUNK 2077 - Loading</title>
+  <style>
+    body {
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Courier New', monospace;
+    }
+    .loading-container {
+      text-align: center;
+    }
+    .loading-btn {
+      background: transparent;
+      color: #0ff;
+      border: 2px solid #0ff;
+      padding: 15px 30px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .loading-btn:hover {
+      background: rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 15px #0ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading-container">
+    <h1 style="color:#0ff;">CYBER POLICE</h1>
+    <button class="loading-btn" onclick="startGame()">
+      START
+    </button>
+  </div>
+</body>
+
+<script>
+    function startGame() {
+      // 注意层级关系：从 index.html 跳转到同级 main.html
+      window.location.href = './main.html#/life-load'
+    }
+</script>
+</html>

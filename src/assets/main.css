@@ -1,0 +1,3 @@
+@import './base.css';
+
+/* 移除冲突样式，使用App.vue中的cyberpunk-container类 */
