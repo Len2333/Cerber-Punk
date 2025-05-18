@@ -26,9 +26,9 @@
 import { ref } from 'vue'
 
 const menuItems = ref([
-  { name: '载入人生', path: '/life-load' },
-  { name: '新的开始', path: '/new-start' },
-  { name: '荣誉台', path: '/honor-wall' }
+  { name: 'Load', path: '/life-load' },
+  { name: 'New', path: '/new-start' },
+  { name: 'other', path: '/honor-wall' }
 ])
 </script>
 
