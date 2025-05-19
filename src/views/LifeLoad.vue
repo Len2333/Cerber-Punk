@@ -1,13 +1,15 @@
 <template>
   <div class="life-load">
-    <h1 class="title">工作经历</h1>
+    <h1 class="title">基层经历</h1>
 
     <!-- 新增文字展示区 -->
     <div class="content-section">
       <!-- 这里填入你的文字内容 -->
-      <p>
+       <router-link to="/yunqi" class="clickable-content">
+        <p>
         在这里撰写一段关于你工作经历的描述文字。可以放公司、职位、职责、项目亮点等。
-      </p>
+        </p>
+      </router-link>
     </div>
 
     <div class="carousel-section">
@@ -122,5 +124,17 @@ const modules = [Navigation, Pagination, Autoplay, A11y];
 }
 .swiper-pagination-bullet-active {
   background: #0ff;
+}
+
+.clickable-content {
+  display: block;
+  padding: 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.clickable-content:hover {
+  background: rgba(0, 255, 255, 0.1);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 </style>

@@ -32,5 +32,5 @@ export default defineConfig({
     //   }
     // }
   },
-  base: './',
+  base: './',  //   这个会影响 Vite 的路径解析规则。默认为 '/'，以绝对路径解析，'./'代表以相对路径解析
 })
