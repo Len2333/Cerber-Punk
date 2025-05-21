@@ -1,48 +1,72 @@
 <template>
   <div class="honor-wall">
-    <h1>showtime
-    </h1>
-    <div class="content-section">
-      <p>请允许我小小装个逼....</p>
+    <!-- 新增存储型xss攻击输入测试模块 -->
+    <div class="xss-test">
+      <input v-model="xssInput" placeholder="输入任意内容（可尝试注入脚本）">
+      <button @click="addHonor">提交</button>
     </div>
+    <!-- 新增反射型xss模块,动态渲染searchQuery -->
+    <div v-if="searchQuery" v-html="searchQuery"></div>
+
+    <!-- 原有内容保持不变 -->
     <div class="honor-display">
       <div class="honor-item" v-for="(item, index) in honors" :key="index">
-        <h3>{{ item.title }}</h3>
+        <h3 v-html="item.title"></h3>
         <p>{{ item.description }}</p>
-        <div class="honor-image" v-if="item.image">
-          <img :src="item.image" :alt="item.title">
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
+const searchQuery = ref('')  // 定义一个空的查询参数
+
+const route = useRoute();
+
+watch(route, () => {
+  /* 获取 hash 部分的查询参数，哈希模式取值法，和标准的history模式不一样，history 模式）下，URL 形如 http://example.com/path?query=param，你可以直接使用 URLSearchParams 来解析查询参数
+  传统模式可以这么写：
+  const urlParams = new URLSearchParams(window.location.search);  //哈希模式下window.location.search 只会解析 # 之前的查询字符串（如果有的话）
+  const queryValue = urlParams.get('query');
+  */
+  //window.location.hash.slice(1):去掉开头的 #(括号里的1代表从第二位开始取值)取后面的字符串，如path?query=param。
+  //hashPart.split('?')：使用 ? 作为分隔符，将字符串分割成数组 [path, queryString]
+  //[1] || ''取[path, queryString]数组里的第二位，也就是queryString（按上面的例子就是query=param），如果没有则返回空字符串。
+  const hashParams = new URLSearchParams(window.location.hash.slice(1).split('?')[1] || '');
+  //get('query')方法得到查询参数的值，注意参数名必须是query，否则会返回 null。
+  const queryValue = hashParams.get('query');
+  console.log('从URL获取的query参数值:', queryValue); // 明确输出原始值
+  //使用 URLSearchParams 解析查询字符串部分。
+  searchQuery.value = queryValue || '';
+  console.log('赋值后的searchQuery.value:', searchQuery.value);
+}, { immediate: true }); // immediate: true 确保初始化时也执行一次
+
+const xssInput = ref('')
+const honors = ref([
+  { title: '荣誉1', description: '荣誉1描述' },
+  { title: '荣誉2', description: '荣誉2描述' }
+])
+
+const addHonor = () => {
+  if (xssInput.value) {
+    honors.value.push({
+      title: xssInput.value,
+      description: xssInput.value
+    })
+    xssInput.value = ''
+  }
+}
+
 interface HonorItem {
   title: string;
   description: string;
   image?: string;
 }
-
-const honors: HonorItem[] = [
-  {
-    title: '荣誉1',
-    description: '荣誉1描述'
-  },
-  {
-    title: '荣誉2',
-    description: '荣誉2描述'
-  },
-  {
-    title: '荣誉3',
-    description: '荣誉3描述'
-  },
-    {
-    title: '荣誉4',
-    description: '荣誉4描述'
-  },
-]
 </script>
+
 
 <style scoped>
 .honor-wall {
