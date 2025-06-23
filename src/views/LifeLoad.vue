@@ -1,13 +1,13 @@
 <template>
   <div class="life-load">
-    <h1 class="title">基层经历</h1>
+    <h1 class="title">工作经历</h1>
 
     <!-- 新增文字展示区 -->
     <div class="content-section">
       <!-- 这里填入你的文字内容 -->
        <router-link to="/yunqi" class="clickable-content">
         <p>
-        在这里撰写一段关于你工作经历的描述文字。可以放公司、职位、职责、项目亮点等。
+        2018年8月1日参加公安工作，第一站巡特警支队突击大队，2019年11月29日到新北分局河海派出所，22年担任警长，23年先后又担任了警务组组长和值班长。
         </p>
       </router-link>
     </div>

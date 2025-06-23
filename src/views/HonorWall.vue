@@ -1,14 +1,14 @@
 <template>
   <div class="honor-wall">
-    <!-- 新增存储型xss攻击输入测试模块 -->
+    <!-- 存储型xss攻击输入测试模块 -->
     <div class="xss-test">
-      <input v-model="xssInput" placeholder="输入任意内容（可尝试注入脚本）">
+      <input v-model="xssInput" placeholder="输入任意内容">
       <button @click="addHonor">提交</button>
     </div>
-    <!-- 新增反射型xss模块,动态渲染searchQuery -->
+    <!-- 反射型xss模块,动态渲染searchQuery -->
     <div v-if="searchQuery" v-html="searchQuery"></div>
 
-    <!-- 原有内容保持不变 -->
+
     <div class="honor-display">
       <div class="honor-item" v-for="(item, index) in honors" :key="index">
         <h3 v-html="item.title"></h3>
@@ -27,7 +27,7 @@ const searchQuery = ref('')  // 定义一个空的查询参数
 const route = useRoute();
 
 watch(route, () => {
-  /* 获取 hash 部分的查询参数，哈希模式取值法，和标准的history模式不一样，history 模式）下，URL 形如 http://example.com/path?query=param，你可以直接使用 URLSearchParams 来解析查询参数
+  /* 获取 hash 部分的查询参数，哈希模式取值法，和标准的history模式不一样，history 模式下，URL 形如 http://example.com/path?query=param，你可以直接使用 URLSearchParams 来解析查询参数
   传统模式可以这么写：
   const urlParams = new URLSearchParams(window.location.search);  //哈希模式下window.location.search 只会解析 # 之前的查询字符串（如果有的话）
   const queryValue = urlParams.get('query');
