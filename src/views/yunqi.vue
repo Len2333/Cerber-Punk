@@ -6,7 +6,7 @@
       
       <!-- 简要案情模块 -->
       <section class="case-section">
-        <h2 class="section-title">简要案情</h2>
+        <h2 class="section-title">云旗案犯罪团伙打着“新零售、大健康、免费吃保健品”的诱人旗号，搭建“云旗系”APP。他们以低价销售保健品为幌子，实则以吸引客户在平台上参与商品拍卖转售、抽取高额手续费攫取非法利益。同时，该团伙设置“团队达量奖”、“直推奖”等极具诱惑力的层级奖励机制，通过专职讲师推广，在短时间内迅速席卷常州并辐射全国。至案发时，该团伙已在全国设立43个分公司，发展会员近3万人，涉案金额高达41亿余元。</h2>
         <div class="section-content">
           <!-- 案件时间线/背景描述 -->
           <p>此处填写案件基本情况...</p>
@@ -39,9 +39,9 @@
 import { RouterView } from 'vue-router';
 import { reactive } from 'vue';
 
-const difficults = reactive([{title:'如何定性？',path:'/yunqi/qualify' ,id:'111' },
-                   {title:'如何取证？',path:'/yunqi/collect',id:'222'},
-                   {title:'一些思考？',path:'/yunqi/thoughts',id:'333'},
+const difficults = reactive([{title:'案件定性之困？',path:'/yunqi/qualify' ,id:'111' },
+                   {title:'数据迷宫之困？',path:'/yunqi/collect',id:'222'},
+                   {title:'协同攻坚之困',path:'/yunqi/thoughts',id:'333'},
 ])
 </script>
 
