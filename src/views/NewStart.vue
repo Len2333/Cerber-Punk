@@ -3,7 +3,8 @@
     <h1 class="title">新的开始</h1>
 
     <div class="content-section">
-      <p>2024年5月1日，通过市局遴选到网安支队三大队工作。</p>
+      <p>2024年5月1日，通过市局遴选到网安支队三大队工作。在滴滴顺风车抢单外挂案、“思聊”跨境特大组织淫秽表演案、武进园区专案、天宁人社局短信通道引流案、“银联会议"APP诈骗案中发挥了自己的价值。将继续向身边优秀的人才们学习，早日在网安发挥出更大的作用。
+      </p>
     </div>
 
     <div class="carousel-section">
@@ -15,6 +16,7 @@
             v-for="(slide, index) in slides" 
             :key="index"
             :style="{ backgroundImage: `url(${slide.img})` }"
+            @click="openLightbox(index)"
           ></div>
         </div>
         <div class="swiper-pagination"></div>
@@ -22,26 +24,101 @@
         <div class="swiper-button-next"></div>
       </div>
     </div>
+
+    <!-- 图片模态框 -->
+    <div class="image-modal" :class="{ active: lightboxActive }" @click.self="closeLightbox">
+      <div class="close-btn" @click="closeLightbox">
+        <i class="fas fa-times"></i>
+      </div>
+      
+      <div class="nav-btn prev-btn" @click="prevImage">
+        <i class="fas fa-chevron-left"></i>
+      </div>
+      
+      <div class="modal-content">
+        <img :src="currentSlide.img" class="modal-image" alt="工作瞬间">
+        <div class="image-info">
+          <h3 class="image-title">工作瞬间 {{ currentSlideIndex + 1 }}/{{ slides.length }}</h3>
+        </div>
+      </div>
+      
+      <div class="nav-btn next-btn" @click="nextImage">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import Swiper from 'swiper'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
+import img5 from '../assets/5.jpg';
+import img6 from '../assets/6.jpg';
+import img7 from '../assets/7.jpg';
+import img8 from '../assets/8.jpg';
 
-// 幻灯片数据 - 使用更符合主题的网安相关图片
+// 幻灯片数据
 const slides = ref([
-  { id: 1, img: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80' },
-  { id: 2, img: 'https://images.unsplash.com/photo-1563014959-7aaa83350992?auto=format&fit=crop&w=800&q=80' },
-  { id: 3, img: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80' },
-  { id: 4, img: 'https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?auto=format&fit=crop&w=800&q=80' }
+  { id: 1, img: img5 },
+  { id: 2, img: img6 },
+  { id: 3, img: img7 },
+  { id: 4, img: img8 }
 ])
 
+// 模态框状态
+const lightboxActive = ref(false)
+const currentSlideIndex = ref(0)
+const currentSlide = ref(slides.value[0])
+
+// 打开模态框
+const openLightbox = (index: number) => {
+  currentSlideIndex.value = index
+  currentSlide.value = slides.value[index]
+  lightboxActive.value = true
+  document.body.style.overflow = 'hidden'
+}
+
+// 关闭模态框
+const closeLightbox = () => {
+  lightboxActive.value = false
+  document.body.style.overflow = 'auto'
+}
+
+// 上一张图片
+const prevImage = () => {
+  currentSlideIndex.value = (currentSlideIndex.value - 1 + slides.value.length) % slides.value.length
+  currentSlide.value = slides.value[currentSlideIndex.value]
+}
+
+// 下一张图片
+const nextImage = () => {
+  currentSlideIndex.value = (currentSlideIndex.value + 1) % slides.value.length
+  currentSlide.value = slides.value[currentSlideIndex.value]
+}
+
+// 键盘事件处理
+const handleKeydown = (e: KeyboardEvent) => {
+  if (!lightboxActive.value) return
+  
+  switch(e.key) {
+    case 'Escape':
+      closeLightbox()
+      break
+    case 'ArrowLeft':
+      prevImage()
+      break
+    case 'ArrowRight':
+      nextImage()
+      break
+  }
+}
+
 onMounted(() => {
+  // 初始化Swiper
   new Swiper('.swiper-container', {
     modules: [Navigation, Pagination, Autoplay],
     loop: true,
@@ -58,6 +135,14 @@ onMounted(() => {
       prevEl: '.swiper-button-prev'
     }
   })
+  
+  // 添加键盘事件监听
+  window.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  // 移除事件监听
+  window.removeEventListener('keydown', handleKeydown)
 })
 </script>
 
@@ -160,6 +245,12 @@ onMounted(() => {
   background-size: cover;
   background-position: center;
   position: relative;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.swiper-slide:hover {
+  transform: scale(1.02);
 }
 
 .swiper-pagination {
@@ -208,6 +299,130 @@ onMounted(() => {
   font-weight: bold;
 }
 
+/* 图片模态框样式 */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 15, 30, 0.95);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.image-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-image {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 12px;
+  box-shadow: 
+    0 0 50px rgba(0, 195, 255, 0.3),
+    0 0 100px rgba(0, 100, 255, 0.1);
+  border: 2px solid rgba(0, 195, 255, 0.5);
+  object-fit: contain;
+}
+
+.image-info {
+  background: rgba(10, 25, 47, 0.8);
+  border-radius: 8px;
+  padding: 15px 20px;
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid rgba(0, 195, 255, 0.3);
+  box-shadow: 0 0 20px rgba(0, 195, 255, 0.2);
+}
+
+.image-title {
+  font-size: 1.5rem;
+  color: #00f3ff;
+  margin-bottom: 8px;
+  text-shadow: 0 0 10px rgba(0, 195, 255, 0.5);
+}
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(10, 25, 47, 0.8);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid rgba(255, 0, 85, 0.5);
+  box-shadow: 0 0 15px rgba(255, 0, 85, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.close-btn:hover {
+  background: rgba(255, 0, 85, 0.2);
+  transform: rotate(90deg);
+}
+
+.close-btn i {
+  font-size: 1.8rem;
+  color: #ff0055;
+}
+
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(10, 25, 47, 0.8);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid rgba(0, 195, 255, 0.5);
+  box-shadow: 0 0 20px rgba(0, 195, 255, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.nav-btn:hover {
+  background: rgba(0, 195, 255, 0.2);
+}
+
+.nav-btn i {
+  font-size: 2rem;
+  color: #00f3ff;
+}
+
+.prev-btn {
+  left: 20px;
+}
+
+.next-btn {
+  right: 20px;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .new-start {
@@ -225,6 +440,50 @@ onMounted(() => {
   
   .swiper-button-prev,
   .swiper-button-next {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .modal-image {
+    max-width: 95vw;
+    max-height: 60vh;
+  }
+  
+  .nav-btn {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .image-title {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.7rem;
+  }
+  
+  .carousel-title {
+    font-size: 1.4rem;
+  }
+  
+  .swiper-container {
+    height: 250px;
+  }
+  
+  .image-info {
+    padding: 10px 15px;
+  }
+  
+  .close-btn {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .nav-btn {
     width: 40px;
     height: 40px;
   }
