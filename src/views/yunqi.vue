@@ -36,8 +36,8 @@ import { RouterView } from 'vue-router';
 import { reactive } from 'vue';
 
 const difficults = reactive([
-  {title:'案件定性之困？',path:'/yunqi/qualify' ,id:'111' },
-  {title:'数据迷宫之困？',path:'/yunqi/collect',id:'222'},
+  {title:'案件定性之困',path:'/yunqi/qualify' ,id:'111' },
+  {title:'数据迷宫之困',path:'/yunqi/collect',id:'222'},
   {title:'协同攻坚之困',path:'/yunqi/thoughts',id:'333'},
 ])
 </script>

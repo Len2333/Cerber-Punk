@@ -1,7 +1,5 @@
 <template>
   <div class="qualify-page">
-    
-    <!-- 图片网格展示 -->
     <div class="image-grid">
       <div 
         v-for="(image, index) in images" 
@@ -9,36 +7,28 @@
         class="image-item"
         @click="openLightbox(index)"
       >
-        <div class="image-placeholder">
-          <div class="placeholder-content">
-            <div class="placeholder-icon">📷</div>
-            <div class="placeholder-text">图片 {{ index + 1 }}</div>
-          </div>
-        </div>
+        <img :src="image.img" :alt="image.alt" class="grid-image">
         <div class="image-overlay">
           <div class="zoom-icon">🔍</div>
         </div>
       </div>
     </div>
-    
-    <!-- 图片放大查看 -->
-    <div v-if="lightboxVisible" class="lightbox" @click.self="closeLightbox">
+
+    <!-- 修复的灯箱部分 -->
+    <div v-show="lightboxVisible" class="lightbox" @click.self="closeLightbox">
       <div class="lightbox-content">
         <button class="lightbox-close" @click="closeLightbox">
           <span class="close-icon">×</span>
         </button>
         <div class="lightbox-image">
-          <div class="placeholder-content large">
-            <div class="placeholder-icon">🖼️</div>
-            <div class="placeholder-text">大图展示 {{ lightboxIndex + 1 }}</div>
-          </div>
+          <img :src="currentImage.img" :alt="currentImage.alt" class="lightbox-img">
         </div>
         <div class="lightbox-nav">
-          <button @click="prevImage">
+          <button @click.stop="prevImage">
             <span class="nav-icon">◀</span>
           </button>
           <span>{{ lightboxIndex + 1 }} / {{ images.length }}</span>
-          <button @click="nextImage">
+          <button @click.stop="nextImage">
             <span class="nav-icon">▶</span>
           </button>
         </div>
@@ -48,29 +38,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import img9 from '../assets/11.jpg';
+import img10 from '../assets/12.jpg';
+import img11 from '../assets/9.jpg';
+import img12 from '../assets/10.jpg';
 
-// 图片数据（稍后从本地加载）
+// 图片数据
 const images = ref([
-  { alt: "图片1描述" },
-  { alt: "图片2描述" },
-  { alt: "图片3描述" },
-  { alt: "图片4描述" }
+  { alt: "图片1描述", img: img9 },
+  { alt: "图片2描述", img: img10 },
+  { alt: "图片3描述", img: img11 },
+  { alt: "图片4描述", img: img12 }
 ]);
 
 // 图片放大查看相关状态
 const lightboxVisible = ref(false);
 const lightboxIndex = ref(0);
 
+// 计算当前显示的图片
+const currentImage = computed(() => {
+  return images.value[lightboxIndex.value];
+});
+
 // 打开图片查看器
 const openLightbox = (index: number) => {
   lightboxIndex.value = index;
   lightboxVisible.value = true;
+  document.body.style.overflow = 'hidden'; // 防止背景滚动
 };
 
 // 关闭图片查看器
 const closeLightbox = () => {
   lightboxVisible.value = false;
+  document.body.style.overflow = ''; // 恢复背景滚动
 };
 
 // 切换到上一张图片
@@ -84,6 +85,28 @@ const nextImage = (e: Event) => {
   e.stopPropagation();
   lightboxIndex.value = (lightboxIndex.value + 1) % images.value.length;
 };
+
+// 添加键盘导航支持
+const handleKeydown = (e: KeyboardEvent) => {
+  if (!lightboxVisible.value) return;
+  
+  if (e.key === 'Escape') {
+    closeLightbox();
+  } else if (e.key === 'ArrowLeft') {
+    prevImage(e);
+  } else if (e.key === 'ArrowRight') {
+    nextImage(e);
+  }
+};
+
+// 添加全局键盘事件监听
+onMounted(() => {
+  window.addEventListener('keydown', handleKeydown);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown);
+});
 </script>
 
 <style scoped>
@@ -97,19 +120,6 @@ const nextImage = (e: Event) => {
   min-height: 100vh;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-h1 {
-  text-align: center;
-  font-size: 3rem;
-  margin-bottom: 2.5rem;
-  text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-  letter-spacing: 2px;
-  background: linear-gradient(90deg, #0ff, #0af);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  padding-bottom: 15px;
-  border-bottom: 2px solid rgba(0, 255, 255, 0.3);
 }
 
 /* 网格视图样式 */
@@ -138,33 +148,11 @@ h1 {
   border-color: rgba(0, 255, 255, 0.5);
 }
 
-.image-placeholder {
+.grid-image {
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #002b2b, #004444);
-}
-
-.placeholder-content {
-  text-align: center;
-  color: rgba(0, 255, 255, 0.7);
-}
-
-.placeholder-content.large {
-  transform: scale(1.5);
-}
-
-.placeholder-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  opacity: 0.7;
-}
-
-.placeholder-text {
-  font-size: 1.3rem;
-  font-weight: 500;
+  object-fit: cover;
+  display: block;
 }
 
 .image-overlay {
@@ -203,7 +191,7 @@ h1 {
   background: rgba(0, 100, 100, 0.8);
 }
 
-/* 图片放大查看样式 */
+/* 修复的灯箱样式 */
 .lightbox {
   position: fixed;
   top: 0;
@@ -223,7 +211,7 @@ h1 {
   max-width: 90%;
   max-height: 90%;
   width: 900px;
-  background: rgba(0, 20, 20, 0.9);
+  background: rgba(0, 20, 20, 0.95);
   border-radius: 15px;
   padding: 30px;
   box-shadow: 0 0 50px rgba(0, 255, 255, 0.2);
@@ -236,9 +224,16 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #002b2b, #003333);
   border-radius: 10px;
   margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.lightbox-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .lightbox-close {
@@ -315,15 +310,11 @@ h1 {
   }
   
   .lightbox-image {
-    height: 50vh;
+    height: 60vh;
   }
 }
 
 @media (max-width: 768px) {
-  h1 {
-    font-size: 2.5rem;
-  }
-  
   .image-grid {
     grid-template-columns: 1fr;
     max-width: 600px;
@@ -339,19 +330,15 @@ h1 {
     height: 40px;
     font-size: 1.3rem;
   }
+  
+  .lightbox-image {
+    height: 50vh;
+  }
 }
 
 @media (max-width: 480px) {
   .qualify-page {
     padding: 1.5rem;
-  }
-  
-  h1 {
-    font-size: 2rem;
-  }
-  
-  .placeholder-icon {
-    font-size: 3rem;
   }
   
   .lightbox-image {
