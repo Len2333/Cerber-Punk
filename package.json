@@ -8,7 +8,10 @@
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
-    "type-check": "vue-tsc --build"
+    "type-check": "vue-tsc --build",
+    "build:index": "vite build --config vite.config.index.ts",
+    "build:main": "vite build --config vite.config.main.ts",
+    "build:all": "npm run build:index && npm run build:main"
   },
   "dependencies": {
     "pinia": "^3.0.1",
